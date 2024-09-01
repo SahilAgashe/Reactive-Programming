@@ -9,10 +9,12 @@ import Foundation
 import UIKit
 import RxSwift
 import RxRelay
+import Combine
 
 class ViewController: UIViewController {
 
-    let aObservable = Observable<Int>.create { (observer: AnyObserver<Int>) in
+    // MARK: RxSwift Properties
+    private let aObservable = Observable<Int>.create { (observer: AnyObserver<Int>) in
         observer.onNext(10)
         observer.onNext(20)
         observer.onNext(30)
@@ -21,21 +23,29 @@ class ViewController: UIViewController {
         return Disposables.create()
     }
     
+    // MARK: Combine Properties
+    private var cancellables = Set<AnyCancellable>()
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .cyan
         runYourCode()
     }
 
+    // MARK: - Run Your Code
     private func runYourCode() {
         //aObservableDemo()
-        publishSubjectDemo()
+        //publishSubjectDemo()
         //publishSubjectDemoSecond()
         //behaviourSubjectDemo()
         //replaySubjectDemo()
         //publicRelayDemo()
+        
+        currentValueSubjectDemo()
     }
     
+    // MARK: - RxSwift
     private func aObservableDemo() {
         // First subscription
         aObservable.subscribe(onNext: {debugPrint("On Next Called , Value =>", $0)},
@@ -237,8 +247,32 @@ class ViewController: UIViewController {
         }
         
         pubRelay.accept(50)
+        
+        print(subscriberOne, subscriberTwo)
     }
     
-    
+    // MARK: - Combine
+    private func currentValueSubjectDemo() {
+        let currentValueSub = CurrentValueSubject<String, Never>.init("Hi")
+        
+        let subscriber1: () = currentValueSub.sink { str in
+            print("Subscriber1: value received => \(str)")
+        }.store(in: &cancellables)
+        
+        //currentValueSub.send(completion: .finished)
+        
+        currentValueSub.send("Sahil , How are you?")
+        
+        let subscriber2: () = currentValueSub.sink { str in
+            print("Subscriber2: value received => \(str)")
+        }.store(in: &cancellables)
+        
+        let subscriber3: () = currentValueSub.sink { str in
+            print("Subscriber3: value received => \(str)")
+        }.store(in: &cancellables)
+        
+        currentValueSub.send("What's up")
+        currentValueSub.send("Believe That!")
+    }
 
 }
