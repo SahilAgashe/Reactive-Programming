@@ -42,7 +42,8 @@ class ViewController: UIViewController {
         //replaySubjectDemo()
         //publicRelayDemo()
         
-        currentValueSubjectDemo()
+        //currentValueSubjectDemo()
+        passthroughSubjectDemo()
     }
     
     // MARK: - RxSwift
@@ -273,6 +274,28 @@ class ViewController: UIViewController {
         
         currentValueSub.send("What's up")
         currentValueSub.send("Believe That!")
+    }
+    
+    private func passthroughSubjectDemo() {
+        let passthroughSub = PassthroughSubject<String, Never>()
+        
+        let subscriber1 = passthroughSub.sink { str in
+            print("Subscriber1: value received => \(str)")
+        }.store(in: &cancellables)
+        
+        passthroughSub.send("Sahil, How are you???")
+        //passthroughSub.send(completion: .finished)
+        
+        let subscriber2: () = passthroughSub.sink { str in
+            print("Subscriber2: value received => \(str)")
+        }.store(in: &cancellables)
+        
+        let subscriber3: () = passthroughSub.sink { str in
+            print("Subscriber3: value received => \(str)")
+        }.store(in: &cancellables)
+        
+        passthroughSub.send("What's up")
+        passthroughSub.send("Believe That!")
     }
 
 }
