@@ -46,6 +46,21 @@ class ViewController: UIViewController {
         passthroughSubjectDemo()
     }
     
+    // MARK: - Analysis
+    
+    private func analysis() {
+
+        /*
+         PublishSubject from RxSwift is similar to
+         PassthroughSubject from Combine
+         */
+        
+        /*
+         BehaviorSubject from RxSwift is similar to
+         CurrentValueSubject from Combine
+         */
+    }
+    
     // MARK: - RxSwift
     private func aObservableDemo() {
         // First subscription
