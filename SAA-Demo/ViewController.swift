@@ -43,7 +43,10 @@ class ViewController: UIViewController {
         //publicRelayDemo()
         
         //currentValueSubjectDemo()
-        passthroughSubjectDemo()
+        //passthroughSubjectDemo()
+        
+        //ignoreElementsDemo()
+        elementAtDemo()
     }
     
     // MARK: - Analysis
@@ -313,4 +316,45 @@ class ViewController: UIViewController {
         passthroughSub.send("Believe That!")
     }
 
+}
+
+// MARK: - Filtering Operators
+extension ViewController {
+    func ignoreElementsDemo() {
+        let strikes = PublishSubject<String>()
+        let disposeBag = DisposeBag()
+        
+        strikes
+            .ignoreElements()
+            .subscribe(onNext: { (a: Never) in
+                print("Hi next event!")
+            }, onCompleted: {
+                print("You are out!")
+            })
+            .disposed(by: disposeBag)
+        
+        strikes.onNext("X")
+        strikes.onNext("Y")
+        strikes.onNext("Z")
+        
+        strikes.onCompleted()
+    }
+    
+    func elementAtDemo() {
+        let strikes = PublishSubject<String>()
+        let disposeBag = DisposeBag()
+        
+        strikes
+            .element(at: 2)
+            .subscribe(onNext: { str in
+                print("String is \(str)")
+            })
+            .disposed(by: disposeBag)
+        
+        strikes.onNext("0")
+        strikes.onNext("1")
+        strikes.onNext("2")
+        strikes.onNext("3")
+        
+    }
 }
