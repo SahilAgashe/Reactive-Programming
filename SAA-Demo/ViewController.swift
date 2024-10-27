@@ -145,7 +145,7 @@ class ViewController: UIViewController {
         
         let specialSubscription = pubSub1.subscribe(pubSub2)
         
-        pubSub2.onNext("Hey Hi, I am Sahil")
+        //pubSub2.onNext("Hey Hi, I am Sahil")
         pubSub1.onNext("What's up Sahil")
         
 

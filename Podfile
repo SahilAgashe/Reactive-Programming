@@ -8,6 +8,5 @@ target 'SAA-Demo' do
   # Pods for SAA-Demo
     pod 'RxSwift', '6.5.0'
     pod 'RxCocoa', '6.5.0'
-    pod 'ProgressHUD', :path => '/Users/sahilamrutagashe/Documents/iOS\ Development/Sahil\ Agashe\ Github\ /SAProgressHUD'
 
 end
