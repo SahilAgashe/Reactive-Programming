@@ -46,7 +46,8 @@ class ViewController: UIViewController {
         //passthroughSubjectDemo()
         
         //ignoreElementsDemo()
-        elementAtDemo()
+        //elementAtDemo()
+        filterDemo()
     }
     
     // MARK: - Analysis
@@ -356,5 +357,15 @@ extension ViewController {
         strikes.onNext("2")
         strikes.onNext("3")
         
+    }
+    
+    func filterDemo() {
+        let disposeBag = DisposeBag()
+        Observable.of(1, 2, 3, 4, 5, 6, 7, 8)
+            .filter({$0 % 2 == 0})
+            .subscribe(onNext: { val in
+                print("Value is \(val)")
+            })
+            .disposed(by: disposeBag)
     }
 }
