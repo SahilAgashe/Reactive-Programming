@@ -14,6 +14,7 @@
 		81C8F56C2C6B9DCC00C5B32B /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 81C8F56B2C6B9DCC00C5B32B /* Base */; };
 		81C8F56E2C6B9DCD00C5B32B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 81C8F56D2C6B9DCD00C5B32B /* Assets.xcassets */; };
 		81C8F5712C6B9DCD00C5B32B /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 81C8F5702C6B9DCD00C5B32B /* Base */; };
+		81F0901C2D00766000E6228F /* SecondControlller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81F0901B2D00766000E6228F /* SecondControlller.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		81C8F56D2C6B9DCD00C5B32B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		81C8F5702C6B9DCD00C5B32B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		81C8F5722C6B9DCD00C5B32B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		81F0901B2D00766000E6228F /* SecondControlller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondControlller.swift; sourceTree = "<group>"; };
 		E5581C252D7EDD1C8E872CFC /* Pods-SAA-Demo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SAA-Demo.release.xcconfig"; path = "Target Support Files/Pods-SAA-Demo/Pods-SAA-Demo.release.xcconfig"; sourceTree = "<group>"; };
 		FDCBE3EAA6EF71D90D53E0A4 /* Pods-SAA-Demo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SAA-Demo.debug.xcconfig"; path = "Target Support Files/Pods-SAA-Demo/Pods-SAA-Demo.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -82,13 +84,22 @@
 			children = (
 				81C8F5642C6B9DCC00C5B32B /* AppDelegate.swift */,
 				81C8F5662C6B9DCC00C5B32B /* SceneDelegate.swift */,
-				81C8F5682C6B9DCC00C5B32B /* ViewController.swift */,
 				81C8F56A2C6B9DCC00C5B32B /* Main.storyboard */,
 				81C8F56D2C6B9DCD00C5B32B /* Assets.xcassets */,
 				81C8F56F2C6B9DCD00C5B32B /* LaunchScreen.storyboard */,
 				81C8F5722C6B9DCD00C5B32B /* Info.plist */,
+				81F0901D2D00766800E6228F /* Controllers */,
 			);
 			path = "SAA-Demo";
+			sourceTree = "<group>";
+		};
+		81F0901D2D00766800E6228F /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				81F0901B2D00766000E6228F /* SecondControlller.swift */,
+				81C8F5682C6B9DCC00C5B32B /* ViewController.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -207,6 +218,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81C8F5692C6B9DCC00C5B32B /* ViewController.swift in Sources */,
+				81F0901C2D00766000E6228F /* SecondControlller.swift in Sources */,
 				81C8F5652C6B9DCC00C5B32B /* AppDelegate.swift in Sources */,
 				81C8F5672C6B9DCC00C5B32B /* SceneDelegate.swift in Sources */,
 			);

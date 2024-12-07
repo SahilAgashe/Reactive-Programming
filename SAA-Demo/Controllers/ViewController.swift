@@ -9,10 +9,41 @@ import Foundation
 import UIKit
 import RxSwift
 import RxRelay
+import RxCocoa
 import Combine
+
+class ViewModel {
+    var selectedTabSubject = PublishSubject<String>()
+    
+    init() {
+        bindRx()
+    }
+    
+    private func bindRx() {
+        let subscription = selectedTabSubject.subscribe(onNext: { str in
+            print("ViewModel tab subject subscription called....")
+        })
+        subscription.disposed(by: DisposeBag())
+    }
+}
 
 class ViewController: UIViewController {
 
+    let viewModel = ViewModel()
+    let mySubject = PublishSubject<String>()
+    
+    private lazy var selectedTabObserver: Observable<String> = {
+        viewModel.selectedTabSubject.asObservable()
+    }()
+    
+    let dataSubject = PublishSubject<String>()
+    let pollingApiSubject = PublishSubject<String>()
+    let interval = 2
+    let totalPollingTime = 10
+    var counter = 0
+    let intSubject = PublishSubject<Int>()
+    let stringSubject = PublishSubject<String>()
+    
     // MARK: RxSwift Properties
     private let aObservable = Observable<Int>.create { (observer: AnyObserver<Int>) in
         observer.onNext(10)
@@ -25,6 +56,8 @@ class ViewController: UIViewController {
     
     // MARK: Combine Properties
     private var cancellables = Set<AnyCancellable>()
+    
+    let disposeBag = DisposeBag()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -47,7 +80,14 @@ class ViewController: UIViewController {
         
         //ignoreElementsDemo()
         //elementAtDemo()
-        filterDemo()
+        //filterDemo()
+        
+        //observableAndSubject()
+        
+        //myMainExecution()
+        zipDemo()
+        //demoMainExecution()
+        //pollingApiDemo()
     }
     
     // MARK: - Analysis
@@ -66,6 +106,105 @@ class ViewController: UIViewController {
     }
     
     // MARK: - RxSwift
+    
+    private func pollingApiDemo() {
+        Observable<Int>.interval(.seconds(2), scheduler: MainScheduler.instance)
+            .flatMap { _ in
+                self.makeStatusApiCall()
+                return self.pollingApiSubject.asObservable()
+            }
+            .filter { str in
+                str.lowercased() == "success"
+            }
+            .take(1)
+            .take(until: Observable<Int>.timer(.seconds(10), scheduler: MainScheduler.instance))
+            .subscribe(onNext: {debugPrint("On Next Called , Value saa demo =>", $0)},
+                       onError: {debugPrint($0)},
+                       onCompleted: {debugPrint("On Completed Called saa demo...")},
+                       onDisposed: {debugPrint("On Disposed Called saa demo...")}).disposed(by: disposeBag)
+    }
+    
+    private func zipDemo() {
+        Observable.zip(intSubject,stringSubject)
+            .subscribe(onNext: {debugPrint("On Next Called , Value zip demo =>", $0)},
+                       onError: {debugPrint($0)},
+                       onCompleted: {debugPrint("On Completed Called zip demo...")},
+                       onDisposed: {debugPrint("On Disposed Called zip demo...")}).disposed(by: disposeBag)
+        
+        intSubject.onNext(1)
+        intSubject.onNext(2)
+        stringSubject.onNext("one")
+        intSubject.onNext(3)
+        stringSubject.onNext("two")
+        intSubject.onNext(4)
+    }
+    
+    
+    private func makeStatusApiCall() {
+        pollingApiSubject.onNext("success")
+        counter = counter + 1
+        print("makeStatusApiCalled, \(counter)")
+    }
+    
+    private func myMainExecution() {
+        Observable.zip(
+            dataSubject.asObservable(),
+            pollingApiSubject.asObservable()
+                .filter({ str in
+                    str.lowercased() == "success"
+                })
+                .take(1)
+                .timeout(.seconds(5), scheduler: MainScheduler.instance)
+                .catch({ _ in
+                    return Observable.just("Failure")
+                })
+        )
+        .subscribe(onNext: {debugPrint("On Next Called , Value saazip =>", $0)},
+                   onError: {debugPrint($0)},
+                   onCompleted: {debugPrint("On Completed Called saazip...")},
+                   onDisposed: {debugPrint("On Disposed Called saa zip...")}).disposed(by: disposeBag)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now()) { [weak self] in
+            guard let self else { return }
+            self.dataSubject.onNext("Hi")
+            self.dataSubject.onNext("hello")
+            self.dataSubject.onNext("what'sup")
+            self.pollingApiSubject.onNext("Failure")
+            self.pollingApiSubject.onNext("Failure")
+            self.pollingApiSubject.onNext("Failure")
+//            self.pollingApiSubject.onNext("Success")
+//            self.pollingApiSubject.onNext("Success")
+//            self.pollingApiSubject.onNext("Success")
+        }
+    }
+    
+    private func demoMainExecution() {
+        Observable.zip(
+            dataSubject.asObservable(),
+            Observable<Int>.interval(.seconds(2), scheduler: MainScheduler.instance)
+                .flatMap({ _ in
+                    self.makeStatusApiCall()
+                    return self.pollingApiSubject.asObservable()
+                })
+                .filter({ str in
+                    str.lowercased() == "success"
+                })
+                .take(1)
+                //.take(until: Observable<Int>.interval(.seconds(5), scheduler: MainScheduler.instance))
+                .timeout(.seconds(5), scheduler: MainScheduler.instance)
+                .catch({ _ in
+                    return Observable.just("Failure")
+                })
+        )
+        .subscribe(onNext: {debugPrint("On Next Called , Value saazip =>", $0)},
+                   onError: {debugPrint($0)},
+                   onCompleted: {debugPrint("On Completed Called saazip...")},
+                   onDisposed: {debugPrint("On Disposed Called saa zip...")}).disposed(by: disposeBag)
+        
+        dataSubject.onNext("Hello I am Data")
+    }
+    
+    
     private func aObservableDemo() {
         // First subscription
         aObservable.subscribe(onNext: {debugPrint("On Next Called , Value =>", $0)},
@@ -128,6 +267,7 @@ class ViewController: UIViewController {
     
     private func publishSubjectDemoSecond() {
         let pubSub1 = PublishSubject<String>()
+        let pubSubObs1 = pubSub1.asObservable()
         
         let subscriptionOne = pubSub1.subscribe { (event: Event<String>) in
             switch event {
@@ -147,13 +287,14 @@ class ViewController: UIViewController {
             }
         }
         
-        let specialSubscription = pubSub1.subscribe(pubSub2)
+        //let specialSubscription = pubSub1.subscribe(pubSub2)
+        pubSubObs1.bind(to: pubSub2).disposed(by: disposeBag)
         
         //pubSub2.onNext("Hey Hi, I am Sahil")
         pubSub1.onNext("What's up Sahil")
         
 
-        print(subscriptionOne, subscriptionTwo , specialSubscription)
+        //print(subscriptionOne, subscriptionTwo , specialSubscription)
     }
     
     private func behaviourSubjectDemo() {
@@ -269,6 +410,18 @@ class ViewController: UIViewController {
         pubRelay.accept(50)
         
         print(subscriberOne, subscriberTwo)
+    }
+    
+    private func observableAndSubject() {
+        mySubject.subscribe(onNext: {str in
+            print("My subject on next called..")
+        }).disposed(by: DisposeBag())
+        
+        selectedTabObserver
+            .bind(to: mySubject)
+            .disposed(by: DisposeBag())
+        
+        viewModel.selectedTabSubject.onNext("Helloo Sahil!")
     }
     
     // MARK: - Combine
